@@ -14,6 +14,12 @@ import com.example.watcher.NewsDisplay;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
@@ -23,8 +29,46 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
 
-        textWatcher();
+//        textWatcher();
 //        iterator();
+        rxJava();
+    }
+
+    private void rxJava() {
+        Observable mObservable= Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
+                e.onNext(1);
+                e.onNext(2);
+                e.onComplete();
+            }
+        });
+
+        Observer mObserver=new Observer<Integer>() {
+            //这是新加入的方法，在订阅后发送数据之前，
+            //回首先调用这个方法，而Disposable可用于取消订阅
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Integer value) {
+                Log.e("lucas", "onNext: "+value );
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+
+        mObservable.subscribe(mObserver);
     }
 
     private void textWatcher() {
